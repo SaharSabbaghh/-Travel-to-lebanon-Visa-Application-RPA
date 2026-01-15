@@ -168,30 +168,44 @@ def insert_arabic_text(page, x: float, y: float, text: str, fontsize: int = FONT
         # Reshape the Arabic text for proper rendering
         display_text = reshape_arabic_text(text)
         point = fitz.Point(x, y)
-        # Use system Arabic font (GeezaPro on macOS)
-        arabic_font_path = "/System/Library/Fonts/GeezaPro.ttc"
-        try:
-            page.insert_text(
-                point,
-                display_text,
-                fontfile=arabic_font_path,
-                fontname="GeezaPro",
-                fontsize=fontsize,
-                color=(0, 0, 0),
-            )
-        except Exception:
-            # Fallback to SFArabic if GeezaPro fails
+        
+        # Try different Arabic font approaches in order of preference
+        font_attempts = [
+            # 1. Try macOS fonts (for local development)
+            {"fontfile": "/System/Library/Fonts/GeezaPro.ttc", "fontname": "GeezaPro"},
+            {"fontfile": "/System/Library/Fonts/SFArabic.ttf", "fontname": "SFArabic"},
+            # 2. Try common Linux fonts (for Railway/production)
+            {"fontfile": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "fontname": "DejaVuSans"},
+            {"fontfile": "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", "fontname": "LiberationSans"},
+            {"fontfile": "/usr/share/fonts/truetype/noto/NotoSansArabic-Regular.ttf", "fontname": "NotoSansArabic"},
+            {"fontfile": "/usr/share/fonts/truetype/freefont/FreeSans.ttf", "fontname": "FreeSans"},
+            # 3. Try PyMuPDF built-in fonts
+            {"fontname": "figo"},  # Built-in font with good Unicode support
+        ]
+        
+        text_inserted = False
+        last_error = None
+        
+        for font_config in font_attempts:
             try:
                 page.insert_text(
                     point,
                     display_text,
-                    fontfile="/System/Library/Fonts/SFArabic.ttf",
-                    fontname="SFArabic",
                     fontsize=fontsize,
                     color=(0, 0, 0),
+                    **font_config
                 )
-            except Exception:
-                # Last resort - use default font
+                text_inserted = True
+                print(f"✓ Arabic text inserted using: {font_config}")
+                break
+            except Exception as e:
+                last_error = e
+                continue
+        
+        # If all attempts failed, try with base Helvetica (won't render Arabic properly but better than nothing)
+        if not text_inserted:
+            try:
+                print(f"Warning: All preferred fonts failed, using fallback. Last error: {last_error}")
                 page.insert_text(
                     point,
                     display_text,
@@ -199,6 +213,9 @@ def insert_arabic_text(page, x: float, y: float, text: str, fontsize: int = FONT
                     fontsize=fontsize,
                     color=(0, 0, 0),
                 )
+                print("⚠ Arabic text inserted with Helvetica (may not render correctly)")
+            except Exception as e:
+                print(f"Error: Failed to insert Arabic text: {e}")
 
 
 def fill_text_fields(page, data: dict):
