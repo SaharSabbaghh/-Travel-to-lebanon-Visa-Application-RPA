@@ -1,9 +1,0 @@
-# Nixpacks configuration for Railway deployment
-# Installs system packages needed for PDF generation with Arabic support
-
-[phases.setup]
-nixPkgs = ["...", "dejavu_fonts", "freefont_ttf"]
-
-[phases.install]
-cmds = ["pip install -r requirements.txt"]
-

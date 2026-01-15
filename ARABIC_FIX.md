@@ -13,21 +13,11 @@ Modified the `insert_arabic_text()` function to:
 - Add verbose logging to track which font is used
 - Proper fallback handling with error messages
 
-### 2. Added Railway Font Support
-Created configuration files to install Arabic fonts on Railway:
-
-**nixpacks.toml** - Installs fonts via Nix packages:
-- `dejavu_fonts` - DejaVu font family with Arabic support
-- `freefont_ttf` - GNU FreeFont with extensive Unicode coverage
-
-**aptfile** - Backup configuration for apt-based systems:
-- `fonts-dejavu`
-- `fonts-freefont-ttf`
-- `fonts-noto`
-- `fonts-noto-core`
-
-### 3. Updated `railway.json`
-Added nixpacks configuration path to ensure fonts are installed during build.
+### 2. Cross-Platform Font Fallback
+The code now uses a smart fallback system that works on any platform:
+- Tries system fonts (macOS, Linux) first
+- Falls back to PyMuPDF's built-in "figo" font which supports Unicode/Arabic
+- Railway deployment uses built-in fonts (no custom installation needed)
 
 ## How It Works
 
@@ -86,10 +76,8 @@ The system automatically:
 3. Applies bidirectional algorithm for right-to-left display
 
 ## Files Modified
-- ✅ `fill_visa_form.py` - Enhanced Arabic font handling
-- ✅ `nixpacks.toml` - New: Font installation for Railway
-- ✅ `aptfile` - New: Backup font installation
-- ✅ `railway.json` - Updated: Reference nixpacks config
+- ✅ `fill_visa_form.py` - Enhanced Arabic font handling with cross-platform support
+- ✅ `railway.json` - Railway deployment configuration (uses auto-detection)
 
 ## Deployment
 
