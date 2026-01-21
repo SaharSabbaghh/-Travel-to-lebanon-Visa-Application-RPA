@@ -254,25 +254,25 @@ def fill_text_fields(page, data: dict):
             x, y = FIELD_COORDINATES[coord_key]
             insert_text(page, x, y, str(value))
     
-    # Fill arrival_date to both trip_start_date and arrival_date fields
-    arrival_date = get_nested_value(data, "trip_info.arrival_date")
-    if arrival_date:
+    # Fill departure_date_from_dubai to both trip_start_date and arrival_date fields
+    departure_from_dubai = get_nested_value(data, "trip_info.departure_date_from_dubai")
+    if departure_from_dubai:
         if "trip_start_date" in FIELD_COORDINATES:
             x, y = FIELD_COORDINATES["trip_start_date"]
-            insert_text(page, x, y, str(arrival_date))
+            insert_text(page, x, y, str(departure_from_dubai))
         if "arrival_date" in FIELD_COORDINATES:
             x, y = FIELD_COORDINATES["arrival_date"]
-            insert_text(page, x, y, str(arrival_date))
+            insert_text(page, x, y, str(departure_from_dubai))
     
-    # Fill departure_date to both trip_end_date and departure_date fields
-    departure_date = get_nested_value(data, "trip_info.departure_date")
-    if departure_date:
+    # Fill arrival_date_to_dubai to both trip_end_date and departure_date fields
+    arrival_to_dubai = get_nested_value(data, "trip_info.arrival_date_to_dubai")
+    if arrival_to_dubai:
         if "trip_end_date" in FIELD_COORDINATES:
             x, y = FIELD_COORDINATES["trip_end_date"]
-            insert_text(page, x, y, str(departure_date))
+            insert_text(page, x, y, str(arrival_to_dubai))
         if "departure_date" in FIELD_COORDINATES:
             x, y = FIELD_COORDINATES["departure_date"]
-            insert_text(page, x, y, str(departure_date))
+            insert_text(page, x, y, str(arrival_to_dubai))
     
     # Auto-translate accompany_name to Arabic for the accompanied_by field
     accompany_name = get_nested_value(data, "accompany_name")

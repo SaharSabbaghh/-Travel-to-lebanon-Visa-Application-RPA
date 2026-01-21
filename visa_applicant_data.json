@@ -25,8 +25,8 @@
     "criminal_record_details": "No"
   },
   "trip_info": {
-    "arrival_date": "01/02/2026",
-    "departure_date": "15/02/2026"
+    "departure_date_from_dubai": "01/02/2026",
+    "arrival_date_to_dubai": "15/02/2026"
   },
   "accommodation_info": {
     "contact_person": "Hotel Phoenicia, +961 1 369 100",
