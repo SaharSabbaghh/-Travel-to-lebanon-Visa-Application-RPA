@@ -33,7 +33,6 @@
     "lebanon_address": "Hotel Phoenicia, Beirut, Lebanon"
   },
   "visa_info": {
-    "type": "two_entry",
-    "duration": "six_months"
+    "type": "two_entry"
   }
 }

@@ -151,8 +151,13 @@ def fill_checkboxes(page, data: dict):
             x, y = FIELD_COORDINATES[checkbox_key]
             insert_checkbox(page, x, y)
     
-    # Visa Duration
-    visa_duration = visa.get("duration", "").lower()
+    # Visa Duration - automatically determined by visa type
+    # Single/Two Entry = 3 months, Multiple Entry = 6 months
+    if visa_type in ("multiple_entry", "multiple"):
+        visa_duration = "six_months"
+    else:
+        visa_duration = "three_months"
+    
     if visa_duration in CHECKBOX_MAPPINGS["visa_duration"]:
         checkbox_key = CHECKBOX_MAPPINGS["visa_duration"][visa_duration]
         if checkbox_key in FIELD_COORDINATES:
