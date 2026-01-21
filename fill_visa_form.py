@@ -33,6 +33,13 @@ except ImportError:
     ARABIC_SUPPORT = False
     print("Warning: arabic-reshaper or python-bidi not installed. Arabic text may not display correctly.")
 
+try:
+    from deep_translator import GoogleTranslator
+    TRANSLATION_SUPPORT = True
+except ImportError:
+    TRANSLATION_SUPPORT = False
+    print("Warning: deep-translator not installed. Arabic translation will not work.")
+
 from field_config import (
     FIELD_COORDINATES,
     CHECKBOX_MAPPINGS,
@@ -42,6 +49,8 @@ from field_config import (
     CHECKBOX_CHAR,
     CHECKBOX_FONT_SIZE,
     ARABIC_ACCOMPANIED_BY_PREFIX,
+    VISA_TYPE_LABELS,
+    BOTTOM_LABEL_FONT_SIZE,
 )
 
 
@@ -151,6 +160,25 @@ def fill_checkboxes(page, data: dict):
             insert_checkbox(page, x, y)
 
 
+def translate_to_arabic(text: str) -> str:
+    """Translate text to Arabic using Google Translate."""
+    if not TRANSLATION_SUPPORT:
+        print("Warning: Translation not available, returning original text")
+        return text
+    
+    if not text or not text.strip():
+        return text
+    
+    try:
+        translator = GoogleTranslator(source='auto', target='ar')
+        translated = translator.translate(text)
+        print(f"✓ Translated '{text}' to Arabic: '{translated}'")
+        return translated
+    except Exception as e:
+        print(f"Warning: Translation failed for '{text}': {e}")
+        return text
+
+
 def reshape_arabic_text(text: str) -> str:
     """Reshape Arabic text for proper display (connected letters, RTL)."""
     if ARABIC_SUPPORT:
@@ -224,12 +252,44 @@ def fill_text_fields(page, data: dict):
         value = get_nested_value(data, json_path)
         if value and coord_key in FIELD_COORDINATES:
             x, y = FIELD_COORDINATES[coord_key]
-            # Special handling for Arabic accompaniment field
-            if coord_key == "accompanied_by_arabic":
-                arabic_text = ARABIC_ACCOMPANIED_BY_PREFIX + str(value)
-                insert_arabic_text(page, x, y, arabic_text)
-            else:
-                insert_text(page, x, y, str(value))
+            insert_text(page, x, y, str(value))
+    
+    # Fill arrival_date to both trip_start_date and arrival_date fields
+    arrival_date = get_nested_value(data, "trip_info.arrival_date")
+    if arrival_date:
+        if "trip_start_date" in FIELD_COORDINATES:
+            x, y = FIELD_COORDINATES["trip_start_date"]
+            insert_text(page, x, y, str(arrival_date))
+        if "arrival_date" in FIELD_COORDINATES:
+            x, y = FIELD_COORDINATES["arrival_date"]
+            insert_text(page, x, y, str(arrival_date))
+    
+    # Fill departure_date to both trip_end_date and departure_date fields
+    departure_date = get_nested_value(data, "trip_info.departure_date")
+    if departure_date:
+        if "trip_end_date" in FIELD_COORDINATES:
+            x, y = FIELD_COORDINATES["trip_end_date"]
+            insert_text(page, x, y, str(departure_date))
+        if "departure_date" in FIELD_COORDINATES:
+            x, y = FIELD_COORDINATES["departure_date"]
+            insert_text(page, x, y, str(departure_date))
+    
+    # Auto-translate accompany_name to Arabic for the accompanied_by field
+    accompany_name = get_nested_value(data, "accompany_name")
+    if accompany_name and "accompanied_by_arabic" in FIELD_COORDINATES:
+        translated_name = translate_to_arabic(accompany_name)
+        arabic_text = ARABIC_ACCOMPANIED_BY_PREFIX + translated_name
+        x, y = FIELD_COORDINATES["accompanied_by_arabic"]
+        insert_arabic_text(page, x, y, arabic_text, fontsize=BOTTOM_LABEL_FONT_SIZE)
+    
+    # Add visa type pricing label on the left side
+    visa_type = get_nested_value(data, "visa_info.type")
+    if visa_type and "visa_type_label" in FIELD_COORDINATES:
+        visa_type_lower = visa_type.lower()
+        if visa_type_lower in VISA_TYPE_LABELS:
+            label_text = VISA_TYPE_LABELS[visa_type_lower]
+            x, y = FIELD_COORDINATES["visa_type_label"]
+            insert_text(page, x, y, label_text, fontsize=BOTTOM_LABEL_FONT_SIZE)
 
 
 def generate_filled_pdf_bytes(data: dict, template_path: str) -> Tuple[bytes, str]:

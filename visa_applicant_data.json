@@ -1,4 +1,5 @@
 {
+  "accompany_name": "John Smith",
   "personal_info": {
     "first_name": "SAHAR",
     "middle_name": "MICHAEL",
@@ -24,8 +25,6 @@
     "criminal_record_details": "No"
   },
   "trip_info": {
-    "start_date": "01/02/2026",
-    "end_date": "15/02/2026",
     "arrival_date": "01/02/2026",
     "departure_date": "15/02/2026"
   },
@@ -34,8 +33,7 @@
     "lebanon_address": "Hotel Phoenicia, Beirut, Lebanon"
   },
   "visa_info": {
-    "type": "single_entry",
+    "type": "two_entry",
     "duration": "six_months"
-  },
-  "accompanied_by_arabic": " يسسي"
+  }
 }

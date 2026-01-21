@@ -11,6 +11,7 @@ FONT_NAME = "helv"  # Helvetica
 FONT_SIZE = 9
 CHECKBOX_CHAR = "X"
 CHECKBOX_FONT_SIZE = 10
+BOTTOM_LABEL_FONT_SIZE = 14  # 1.5x larger for visa type label and accompanied by text
 
 # Field coordinates: (x, y) where y is from top of page
 # Based on actual PDF text extraction analysis
@@ -139,6 +140,10 @@ FIELD_COORDINATES = {
     # ===== ARABIC ACCOMPANIMENT TEXT =====
     # Bottom right of page - "ﺑﻤﺮاﻓﻘﺔ" + Arabic name
     "accompanied_by_arabic": (450, 750),
+    
+    # ===== VISA TYPE PRICING LABEL =====
+    # Bottom left of page - same y-level as accompanied_by_arabic
+    "visa_type_label": (72, 750),
 }
 
 # Mapping of data values to checkbox fields
@@ -208,17 +213,21 @@ TEXT_FIELD_MAPPINGS = {
     "travel_history.visa_refusal_details": "visa_refusal_details",
     "travel_history.lebanon_previous_visits": "lebanon_previous_visits",
     "travel_history.criminal_record_details": "criminal_record_details",
-    "trip_info.start_date": "trip_start_date",
-    "trip_info.end_date": "trip_end_date",
     "trip_info.other_purpose": "other_purpose_text",
-    "trip_info.arrival_date": "arrival_date",
-    "trip_info.departure_date": "departure_date",
     "accommodation_info.contact_person": "contact_person",
     "accommodation_info.lebanon_address": "lebanon_address",
-    "signature_date": "signature_date",
-    "accompanied_by_arabic": "accompanied_by_arabic",
 }
 
 # Arabic text prefix for accompaniment
 ARABIC_ACCOMPANIED_BY_PREFIX = "ﺑﻤﺮاﻓﻘﺔ  "
+
+# Visa type pricing labels
+VISA_TYPE_LABELS = {
+    "single_entry": "Single Entry 3M AED 325 ",
+    "single": "Single Entry 3M AED 325 ",
+    "two_entry": "Two Entry 3M AED 465 ",
+    "double": "Two Entry 3M AED 465 ",
+    "multiple_entry": "Multiple Entry 6M AED 645 ",
+    "multiple": "Multiple Entry 6M AED   645 ",
+}
 
